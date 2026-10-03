@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Athlete, Discipline, SandaAthleteDetails, TaoluAthleteDetails } from '../types';
-import { X, User, Phone, Scale, Sparkles } from 'lucide-react';
+import { X, User, Phone, Scale, Users } from 'lucide-react';
 
 interface AthleteModalProps {
   isOpen: boolean;
@@ -33,6 +33,13 @@ export const AthleteModal: React.FC<AthleteModalProps> = ({
   const [shoeSize, setShoeSize] = useState('40');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+
+  // Parent Info
+  const [fatherName, setFatherName] = useState('');
+  const [fatherPhone, setFatherPhone] = useState('');
+  const [motherName, setMotherName] = useState('');
+  const [motherPhone, setMotherPhone] = useState('');
+
   const [healthStatus, setHealthStatus] = useState<'Sehat / Fit' | 'Recovery' | 'Cedera Ringan' | 'Perlu Perhatian'>('Sehat / Fit');
   const [docStatus, setDocStatus] = useState<'Lengkap' | 'Belum Lengkap' | 'Sedang Diproses'>('Lengkap');
   const [notes, setNotes] = useState('');
@@ -68,6 +75,12 @@ export const AthleteModal: React.FC<AthleteModalProps> = ({
       setShoeSize(initialData.shoeSize || '40');
       setPhone(initialData.phone);
       setEmail(initialData.email || '');
+
+      setFatherName(initialData.fatherName || '');
+      setFatherPhone(initialData.fatherPhone || '');
+      setMotherName(initialData.motherName || '');
+      setMotherPhone(initialData.motherPhone || '');
+
       setHealthStatus(initialData.healthStatus);
       setDocStatus(initialData.docStatus);
       setNotes(initialData.notes);
@@ -103,6 +116,10 @@ export const AthleteModal: React.FC<AthleteModalProps> = ({
       setShoeSize('40');
       setPhone('');
       setEmail('');
+      setFatherName('');
+      setFatherPhone('');
+      setMotherName('');
+      setMotherPhone('');
       setHealthStatus('Sehat / Fit');
       setDocStatus('Lengkap');
       setNotes('');
@@ -169,6 +186,10 @@ export const AthleteModal: React.FC<AthleteModalProps> = ({
       shoeSize,
       phone,
       email,
+      fatherName,
+      fatherPhone,
+      motherName,
+      motherPhone,
       healthStatus,
       docStatus,
       notes,
@@ -334,7 +355,7 @@ export const AthleteModal: React.FC<AthleteModalProps> = ({
 
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1">
-                Nomor HP / WhatsApp
+                Nomor HP Atlet
               </label>
               <input
                 type="text"
@@ -344,74 +365,65 @@ export const AthleteModal: React.FC<AthleteModalProps> = ({
                 className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white"
               />
             </div>
+          </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
-                Email
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="email@gmail.com"
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white"
-              />
+          {/* Parent Information Section (Data Orang Tua) */}
+          <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3">
+            <div className="flex items-center gap-2 text-xs font-bold text-red-400 uppercase">
+              <Users className="w-4 h-4" />
+              <span>Data Orang Tua (Ayah & Ibu)</span>
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Ukuran Baju</label>
+                <label className="block text-[11px] font-semibold text-slate-300 mb-1">
+                  Nama Ayah
+                </label>
                 <input
                   type="text"
-                  value={shirtSize}
-                  onChange={(e) => setShirtSize(e.target.value)}
-                  placeholder="M / L / XL"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-bold"
+                  value={fatherName}
+                  onChange={(e) => setFatherName(e.target.value)}
+                  placeholder="Nama Ayah..."
+                  className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Ukuran Sepatu</label>
+                <label className="block text-[11px] font-semibold text-slate-300 mb-1">
+                  No. HP Ayah
+                </label>
                 <input
                   type="text"
-                  value={shoeSize}
-                  onChange={(e) => setShoeSize(e.target.value)}
-                  placeholder="40"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-bold"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2 sm:col-span-2">
-              <div>
-                <label className="block text-[11px] font-semibold text-slate-300 mb-1">Tinggi Badan (TB cm)</label>
-                <input
-                  type="number"
-                  value={height}
-                  onChange={(e) => setHeight(parseFloat(e.target.value) || 0)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white"
+                  value={fatherPhone}
+                  onChange={(e) => setFatherPhone(e.target.value)}
+                  placeholder="0812-xxxx-xxxx"
+                  className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-slate-300 mb-1">Berat Badan (BB kg)</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  value={weight}
-                  onChange={(e) => setWeight(parseFloat(e.target.value) || 0)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-amber-400 font-bold"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-semibold text-slate-300 mb-1">Gol. Darah</label>
+                <label className="block text-[11px] font-semibold text-slate-300 mb-1">
+                  Nama Ibu
+                </label>
                 <input
                   type="text"
-                  value={bloodType}
-                  onChange={(e) => setBloodType(e.target.value)}
-                  placeholder="O / A / B / AB"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white"
+                  value={motherName}
+                  onChange={(e) => setMotherName(e.target.value)}
+                  placeholder="Nama Ibu..."
+                  className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-300 mb-1">
+                  No. HP Ibu
+                </label>
+                <input
+                  type="text"
+                  value={motherPhone}
+                  onChange={(e) => setMotherPhone(e.target.value)}
+                  placeholder="0812-xxxx-xxxx"
+                  className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white"
                 />
               </div>
             </div>

@@ -45,6 +45,11 @@ export interface Athlete {
   email?: string;
   shirtSize?: string;
   shoeSize?: string;
+  // Parent Data
+  fatherName?: string;
+  fatherPhone?: string;
+  motherName?: string;
+  motherPhone?: string;
   healthStatus: 'Sehat / Fit' | 'Recovery' | 'Cedera Ringan' | 'Perlu Perhatian';
   docStatus: 'Lengkap' | 'Belum Lengkap' | 'Sedang Diproses';
   notes: string;
@@ -112,7 +117,6 @@ export interface MatchSchedule {
   venue: string; // e.g. "Sport Hall Atas Ngarai Bukittinggi"
   status: MatchStatus;
   notes?: string;
-  // Discipline specific details
   sandaExtra?: {
     weighInTime: string;
     weighInResult: string;
@@ -151,7 +155,7 @@ export interface AppSettings {
   contingentName: string; // e.g. "Kontingen Wushu Kab. Padang Pariaman"
   venueLocation: string; // e.g. "Sport Hall Atas Ngarai Bukittinggi"
   emergencyContact: string; // e.g. "+62 812-9876-5432 (Manajer Kontingen)"
-  faviconUrl?: string; // Custom Favicon & Logo URL
+  faviconUrl?: string; // Custom Favicon & Logo URL or Base64 Data URL
 }
 
 export interface AppState {

@@ -21,8 +21,8 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ state }) => {
   >('atlet');
 
   const reportTabs = [
-    { id: 'kesiapan', title: '1. Kesiapan Kontingen' },
-    { id: 'atlet', title: '2. Daftar Atlet (Gambar 2)' },
+    { id: 'atlet', title: '1. Daftar Atlet & Orang Tua (Gambar 1 & 2)' },
+    { id: 'kesiapan', title: '2. Kesiapan Kontingen' },
     { id: 'pelatih', title: '3. Daftar Pelatih' },
     { id: 'official', title: '4. Daftar Official' },
     { id: 'checklist_gear', title: '5. Checklist Perlengkapan' },
@@ -35,20 +35,20 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ state }) => {
   const handleExportPDFClick = () => {
     switch (selectedReport) {
       case 'atlet': {
-        const headers = ['Nama', 'L/P', 'Tempat/Tgl Lahir', 'Kategori', 'KK', 'NIK', 'TB', 'BB', 'Baju/Sepatu', 'HP'];
+        const headers = ['Nama Atlet', 'L/P', 'Ayah', 'HP Ayah', 'Ibu', 'HP Ibu', 'Kelas / Nomor', 'NIK', 'TB/BB', 'HP Atlet'];
         const data = state.athletes.map((a) => [
           a.name,
           a.gender === 'Laki-laki' ? 'L' : 'P',
-          a.birthPlace ? `${a.birthPlace}, ${a.birthDate || ''}` : '-',
+          a.fatherName || '-',
+          a.fatherPhone || '-',
+          a.motherName || '-',
+          a.motherPhone || '-',
           a.matchCategory,
-          a.noKK || '-',
           a.nik,
-          a.height ? `${a.height}cm` : '-',
-          a.weight > 0 ? `${a.weight}kg` : '-',
-          `${a.shirtSize || '-'}/${a.shoeSize || '-'}`,
+          `${a.height || '-'}cm / ${a.weight || '-'}kg`,
           a.phone || '-',
         ]);
-        exportToPDF(state, 'Daftar Atlet Kontingen Padang Pariaman', headers, data);
+        exportToPDF(state, 'Daftar Atlet & Orang Tua Padang Pariaman', headers, data);
         break;
       }
       case 'pelatih': {
@@ -181,17 +181,15 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ state }) => {
               <thead className="bg-slate-950 text-slate-400 uppercase text-[10px]">
                 <tr>
                   <th className="p-2.5">#</th>
-                  <th className="p-2.5">Nama</th>
-                  <th className="p-2.5">L/P</th>
-                  <th className="p-2.5">Tempat, Tgl Lahir</th>
+                  <th className="p-2.5">Nama Atlet</th>
+                  <th className="p-2.5">Ayah</th>
+                  <th className="p-2.5">HP Ayah</th>
+                  <th className="p-2.5">Ibu</th>
+                  <th className="p-2.5">HP Ibu</th>
                   <th className="p-2.5">Kelas/Nomor</th>
-                  <th className="p-2.5">Baju/Sepatu</th>
-                  <th className="p-2.5">KK</th>
                   <th className="p-2.5">NIK</th>
                   <th className="p-2.5">TB/BB</th>
-                  <th className="p-2.5">Gol.Darah</th>
-                  <th className="p-2.5">E-Mail</th>
-                  <th className="p-2.5">HP</th>
+                  <th className="p-2.5">HP Atlet</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800">
@@ -199,16 +197,14 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ state }) => {
                   <tr key={a.id} className="hover:bg-slate-800/50">
                     <td className="p-2.5 font-mono text-slate-500">{i + 1}</td>
                     <td className="p-2.5 font-bold text-white whitespace-nowrap">{a.name}</td>
-                    <td className="p-2.5">{a.gender === 'Laki-laki' ? 'L' : 'P'}</td>
-                    <td className="p-2.5 whitespace-nowrap">{a.birthPlace}, {a.birthDate}</td>
-                    <td className="p-2.5 font-semibold text-amber-400 whitespace-nowrap">{a.matchCategory}</td>
-                    <td className="p-2.5 whitespace-nowrap">{a.shirtSize || '-'}/{a.shoeSize || '-'}</td>
-                    <td className="p-2.5 font-mono text-slate-400">{a.noKK || '-'}</td>
+                    <td className="p-2.5 whitespace-nowrap text-amber-300 font-semibold">{a.fatherName || '-'}</td>
+                    <td className="p-2.5 font-mono text-amber-400">{a.fatherPhone || '-'}</td>
+                    <td className="p-2.5 whitespace-nowrap text-emerald-300 font-semibold">{a.motherName || '-'}</td>
+                    <td className="p-2.5 font-mono text-emerald-400">{a.motherPhone || '-'}</td>
+                    <td className="p-2.5 font-semibold text-white whitespace-nowrap">{a.matchCategory}</td>
                     <td className="p-2.5 font-mono text-slate-400">{a.nik}</td>
-                    <td className="p-2.5 font-bold text-emerald-400">{a.height ? `${a.height}cm` : '-'} / {a.weight ? `${a.weight}kg` : '-'}</td>
-                    <td className="p-2.5 text-center text-red-400 font-bold">{a.bloodType || '-'}</td>
-                    <td className="p-2.5">{a.email || '-'}</td>
-                    <td className="p-2.5 text-emerald-400 font-semibold">{a.phone || '-'}</td>
+                    <td className="p-2.5 font-bold text-slate-200">{a.height ? `${a.height}cm` : '-'} / {a.weight ? `${a.weight}kg` : '-'}</td>
+                    <td className="p-2.5 text-slate-300 font-semibold">{a.phone || '-'}</td>
                   </tr>
                 ))}
               </tbody>

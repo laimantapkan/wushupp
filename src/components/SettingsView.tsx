@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AppSettings } from '../types';
-import { Settings, Save, RefreshCw, AlertTriangle, Image as ImageIcon } from 'lucide-react';
+import { Settings, Save, RefreshCw, AlertTriangle, Upload, Image as ImageIcon } from 'lucide-react';
 
 interface SettingsViewProps {
   settings: AppSettings;
@@ -21,6 +21,21 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
     settings.faviconUrl || '/wushu_logo.svg'
   );
   const [saveSuccess, setSaveSuccess] = useState(false);
+
+  // File Upload Handler (Mobile Gallery / PC Upload)
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64Data = event.target?.result as string;
+      if (base64Data) {
+        setFaviconUrl(base64Data);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,7 +67,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             <h2 className="text-xl font-extrabold text-white">Pengaturan Sistem Kontingen</h2>
           </div>
           <p className="text-xs text-slate-400 mt-1">
-            Ubah tanggal countdown, nama kontingen, lokasi venue, logo/favicon kustom, dan kontak darurat.
+            Ubah tanggal countdown, nama kontingen, lokasi venue, upload logo/favicon dari HP/PC, dan kontak darurat.
           </p>
         </div>
       </div>
@@ -73,33 +88,52 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             />
           </div>
 
-          {/* Favicon & Logo URL Manual Settings */}
+          {/* Favicon & Logo Upload Settings */}
           <div>
             <label className="block text-xs font-semibold text-slate-300 mb-1">
-              Favicon & Logo Kontingen (URL Gambar)
+              Favicon & Logo Kontingen (Upload dari Galeri HP / PC)
             </label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                required
-                value={faviconUrl}
-                onChange={(e) => setFaviconUrl(e.target.value)}
-                placeholder="https://... atau /src/assets/images/wushu_logo.png"
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono"
-              />
-              <div className="w-10 h-10 rounded-lg bg-white p-0.5 flex items-center justify-center border border-slate-700 shrink-0">
+            <div className="flex flex-col sm:flex-row gap-3 items-center">
+              <div className="w-16 h-16 rounded-xl bg-white p-1 flex items-center justify-center border border-slate-700 shrink-0 shadow">
                 <img
                   src={faviconUrl}
                   alt="Favicon Preview"
-                  className="w-full h-full object-contain rounded"
+                  className="w-full h-full object-contain rounded-lg"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = '/src/assets/images/wushu_logo_1791002894709.jpg';
+                    (e.target as HTMLImageElement).src = '/wushu_logo.svg';
                   }}
                 />
               </div>
+
+              <div className="flex-1 space-y-2 w-full">
+                <div className="flex gap-2">
+                  <label
+                    htmlFor="favicon-upload"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-extrabold text-xs rounded-lg shadow cursor-pointer transition"
+                  >
+                    <Upload className="w-4 h-4" />
+                    <span>Upload Foto dari Galeri HP / PC</span>
+                  </label>
+                  <input
+                    id="favicon-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                </div>
+
+                <input
+                  type="text"
+                  value={faviconUrl.startsWith('data:') ? 'Base64 Gambar Terunggah' : faviconUrl}
+                  onChange={(e) => setFaviconUrl(e.target.value)}
+                  placeholder="atau masukkan URL Gambar: https://..."
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-300 font-mono"
+                />
+              </div>
             </div>
-            <p className="text-[11px] text-slate-500 mt-1">
-              Anda dapat mengganti logo/favicon ini secara manual kapan saja dengan memasukkan URL gambar yang diinginkan.
+            <p className="text-[11px] text-slate-500 mt-1.5">
+              Anda dapat memilih foto logo dari Galeri HP/PC atau memasukkan link URL gambar secara langsung.
             </p>
           </div>
 
@@ -143,7 +177,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
           <div className="flex items-center justify-between pt-4 border-t border-slate-800">
             {saveSuccess ? (
-              <span className="text-xs text-emerald-400 font-bold">✓ Pengaturan berhasil disimpan!</span>
+              <span className="text-xs text-emerald-400 font-bold">✓ Pengaturan & Favicon berhasil disimpan!</span>
             ) : (
               <span />
             )}
