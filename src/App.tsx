@@ -360,6 +360,8 @@ export default function App() {
         isOpen={isNotifModalOpen}
         onClose={() => setIsNotifModalOpen(false)}
         notifications={state.notifications}
+        checklists={state.checklists}
+        athletes={state.athletes}
         onMarkAsRead={handleMarkNotifRead}
         onClearAll={handleClearAllNotifs}
       />
