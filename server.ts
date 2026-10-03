@@ -50,6 +50,14 @@ async function startServer() {
   app.use(express.json({ limit: '10mb' }));
   app.use(express.static(path.resolve(process.cwd(), 'public')));
 
+  // Disable cache for API endpoints
+  app.use('/api', (_req, res, next) => {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    next();
+  });
+
   // Initialize Store
   let state = getStore();
 

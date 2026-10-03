@@ -18,21 +18,19 @@ export class ApiService {
       onStatusChange(this.isConnected);
     }
 
-    // Initial Fetch via HTTP to ensure fresh state from server file
+    // Initial Fetch via HTTP
     this.fetchStateHttp();
 
     // Start WebSocket
     if (!this.ws) {
       this.connectWebSocket();
-    } else if (this.currentState) {
-      onStateChange(this.currentState);
     }
 
-    // Start Polling Timer (every 2.5 seconds) as foolproof multi-device fallback
+    // Poll every 1.5 seconds for instant multi-device sync across all mobile & desktop networks
     if (!this.pollTimer) {
       this.pollTimer = setInterval(() => {
         this.fetchStateHttp();
-      }, 2500);
+      }, 1500);
     }
   }
 
@@ -49,9 +47,7 @@ export class ApiService {
       this.ws = ws;
 
       ws.onopen = () => {
-        this.isConnected = true;
-        this.notifyStatus(true);
-        // Sync fresh state immediately on WS connect
+        this.setConnectedStatus(true);
         this.fetchStateHttp();
       };
 
@@ -59,9 +55,8 @@ export class ApiService {
         try {
           const data = JSON.parse(event.data);
           if (data.type === 'STATE_INIT' || data.type === 'STATE_UPDATE') {
-            if (data.state && data.state.lastUpdated !== this.currentState.lastUpdated) {
-              this.currentState = data.state;
-              this.notifyListeners(data.state);
+            if (data.state) {
+              this.applyNewState(data.state);
             }
           }
         } catch (e) {
@@ -70,69 +65,87 @@ export class ApiService {
       };
 
       ws.onclose = () => {
-        this.isConnected = false;
-        this.notifyStatus(false);
         this.ws = null;
         setTimeout(() => this.connectWebSocket(), 3000);
       };
 
       ws.onerror = () => {
-        this.isConnected = false;
-        this.notifyStatus(false);
+        // HTTP polling keeps connection active
       };
     } catch (e) {
-      console.warn('WebSocket connection failed, relying on HTTP polling', e);
+      console.warn('WebSocket connection error, using HTTP polling', e);
     }
   }
 
-  private static notifyListeners(state: AppState) {
-    this.listeners.forEach((listener) => listener(state));
+  private static setConnectedStatus(connected: boolean) {
+    if (this.isConnected !== connected) {
+      this.isConnected = connected;
+      this.statusListeners.forEach((listener) => listener(connected));
+    }
   }
 
-  private static notifyStatus(connected: boolean) {
-    this.statusListeners.forEach((listener) => listener(connected));
+  private static applyNewState(newState: AppState) {
+    const hasChanged = JSON.stringify(newState) !== JSON.stringify(this.currentState);
+    if (hasChanged) {
+      this.currentState = newState;
+      this.listeners.forEach((listener) => listener(newState));
+    }
   }
 
   static async fetchStateHttp(): Promise<AppState> {
     try {
-      const res = await fetch('/api/state');
+      const res = await fetch('/api/state?t=' + Date.now(), { cache: 'no-store' });
       if (res.ok) {
         const state: AppState = await res.json();
-        if (state && state.lastUpdated !== this.currentState.lastUpdated) {
-          this.currentState = state;
-          this.notifyListeners(state);
-          this.isConnected = true;
-          this.notifyStatus(true);
+        this.setConnectedStatus(true);
+        if (state) {
+          this.applyNewState(state);
         }
         return state;
       }
     } catch (e) {
       console.error('HTTP fetch state error:', e);
+      this.setConnectedStatus(false);
     }
     return this.currentState;
   }
 
-  static updateState(newState: AppState) {
+  static async updateState(newState: AppState) {
     newState.lastUpdated = new Date().toISOString();
-    this.currentState = newState;
-    this.notifyListeners(newState);
+    this.applyNewState(newState);
 
-    // Send HTTP POST to persist to disk immediately
-    fetch('/api/state', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newState),
-    }).catch((e) => console.error('Failed to post state via REST:', e));
+    // Send HTTP POST to save on server disk
+    try {
+      const res = await fetch('/api/state', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newState),
+      });
 
-    // Also send WS message for real-time push
+      if (res.ok) {
+        const data = await res.json();
+        if (data.state) {
+          this.applyNewState(data.state);
+          this.setConnectedStatus(true);
+        }
+      }
+    } catch (e) {
+      console.error('Failed to post state via REST:', e);
+    }
+
+    // Also send WS broadcast
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-      this.ws.send(
-        JSON.stringify({
-          type: 'UPDATE_STATE',
-          state: newState,
-          clientId: CLIENT_ID,
-        })
-      );
+      try {
+        this.ws.send(
+          JSON.stringify({
+            type: 'UPDATE_STATE',
+            state: newState,
+            clientId: CLIENT_ID,
+          })
+        );
+      } catch (err) {
+        console.error('WS send error:', err);
+      }
     }
   }
 
@@ -141,8 +154,7 @@ export class ApiService {
       .then((res) => res.json())
       .then((data) => {
         if (data.state) {
-          this.currentState = data.state;
-          this.notifyListeners(data.state);
+          this.applyNewState(data.state);
         }
       });
 
