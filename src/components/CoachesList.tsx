@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Coach, Official } from '../types';
 import { UserCheck, Building, Plus, Phone, Edit2, Trash2, Shield, HeartPulse, X } from 'lucide-react';
 
@@ -9,6 +9,7 @@ interface CoachesListProps {
   onDeleteCoach: (id: string) => void;
   onSaveOfficial: (official: Official) => void;
   onDeleteOfficial: (id: string) => void;
+  defaultTab?: 'coaches' | 'officials';
 }
 
 export const CoachesList: React.FC<CoachesListProps> = ({
@@ -18,8 +19,14 @@ export const CoachesList: React.FC<CoachesListProps> = ({
   onDeleteCoach,
   onSaveOfficial,
   onDeleteOfficial,
+  defaultTab = 'coaches',
 }) => {
-  const [activeTab, setActiveTab] = useState<'coaches' | 'officials'>('coaches');
+  const [activeTab, setActiveTab] = useState<'coaches' | 'officials'>(defaultTab);
+
+  useEffect(() => {
+    setActiveTab(defaultTab);
+  }, [defaultTab]);
+
   const [isCoachModalOpen, setIsCoachModalOpen] = useState(false);
   const [editingCoach, setEditingCoach] = useState<Coach | null>(null);
 
@@ -115,30 +122,33 @@ export const CoachesList: React.FC<CoachesListProps> = ({
       <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <UserCheck className="w-6 h-6 text-purple-400" />
-            <h2 className="text-xl font-extrabold text-white">Data Pelatih & Official Kontingen</h2>
+            {activeTab === 'coaches' ? (
+              <UserCheck className="w-6 h-6 text-purple-400" />
+            ) : (
+              <Building className="w-6 h-6 text-blue-400" />
+            )}
+            <h2 className="text-xl font-extrabold text-white">
+              {activeTab === 'coaches' ? 'Data Pelatih Kontingen' : 'Data Official & Manajemen'}
+            </h2>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
-            Kelola tim pelatih Sanda, Taolu, fisioterapis, manajer kontingen, sekretariat, dan logistik.
-          </p>
         </div>
 
         {/* Action Button depending on sub-tab */}
         {activeTab === 'coaches' ? (
           <button
             onClick={() => handleOpenCoachModal()}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl text-xs font-bold shadow-lg transition"
+            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white rounded-xl text-xs font-bold shadow-lg transition"
           >
             <Plus className="w-4 h-4" />
-            <span>Tambah Pelatih</span>
+            <span>Tambah Pelatih Baru</span>
           </button>
         ) : (
           <button
             onClick={() => handleOpenOfficialModal()}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl text-xs font-bold shadow-lg transition"
+            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white rounded-xl text-xs font-bold shadow-lg transition"
           >
             <Plus className="w-4 h-4" />
-            <span>Tambah Official</span>
+            <span>Tambah Official Baru</span>
           </button>
         )}
       </div>
@@ -181,7 +191,7 @@ export const CoachesList: React.FC<CoachesListProps> = ({
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="px-2.5 py-0.5 text-[10px] font-extrabold bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-full">
-                    {c.specialization.toUpperCase()}
+                    PELATIH {c.specialization.toUpperCase()}
                   </span>
                   <span className="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">
                     {c.healthStatus}

@@ -123,9 +123,6 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ state }) => {
             <BarChart3 className="w-6 h-6 text-red-500" />
             <h2 className="text-xl font-extrabold text-white">Laporan Kesiapan Kontingen</h2>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
-            Unduh laporan resmi format PDF dan Excel untuk Sekretariat KONI & Panitia PORPROV XVI SUMBAR.
-          </p>
         </div>
 
         {/* Action Export Buttons */}

@@ -88,9 +88,6 @@ export const ChecklistsView: React.FC<ChecklistsViewProps> = ({
             <CheckSquare className="w-6 h-6 text-red-500" />
             <h2 className="text-xl font-extrabold text-white">Checklist Perlengkapan & Dokumen Kontingen</h2>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
-            Centang dan pantau kondisi barang secara real-time untuk Atlet, Pelatih, dan Manajemen.
-          </p>
         </div>
 
         <button

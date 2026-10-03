@@ -66,9 +66,6 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             <Settings className="w-6 h-6 text-red-500" />
             <h2 className="text-xl font-extrabold text-white">Pengaturan Sistem Kontingen</h2>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
-            Ubah tanggal countdown, nama kontingen, lokasi venue, upload logo/favicon dari HP/PC, dan kontak darurat.
-          </p>
         </div>
       </div>
 

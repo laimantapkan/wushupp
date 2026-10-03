@@ -10,8 +10,7 @@ import {
   Edit2,
   Trash2,
   Eye,
-  X,
-  PhoneCall
+  X
 } from 'lucide-react';
 
 interface AthletesListProps {
@@ -72,9 +71,6 @@ export const AthletesList: React.FC<AthletesListProps> = ({
             <Users className="w-6 h-6 text-red-500" />
             <h2 className="text-xl font-extrabold text-white">Data Atlet Kontingen Wushu Padang Pariaman</h2>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
-            Data resmi {athletes.length} atlet PORPROV XVI SUMBAR lengkap dengan Data Orang Tua (Ayah & Ibu).
-          </p>
         </div>
 
         <button
@@ -93,7 +89,7 @@ export const AthletesList: React.FC<AthletesListProps> = ({
           <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
           <input
             type="text"
-            placeholder="Cari nama, NIK, KK, atau nama orang tua..."
+            placeholder="Cari nama, NIK, KK, atau nomor tanding..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
@@ -158,34 +154,31 @@ export const AthletesList: React.FC<AthletesListProps> = ({
         </div>
       </div>
 
-      {/* Table View (Matching Spreadsheet Gambar 1 & Gambar 2) */}
+      {/* Table View (Simplified as requested) */}
       {viewMode === 'table' && (
         <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs text-slate-300">
               <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] font-bold border-b border-slate-800">
                 <tr>
-                  <th className="p-3">#</th>
-                  <th className="p-3">Nama Lengkap</th>
-                  <th className="p-3">L/P</th>
+                  <th className="py-3 px-2 text-center w-10">No</th>
+                  <th className="py-3 pl-1 pr-3">Nama Lengkap</th>
+                  <th className="p-3 text-center">L/P</th>
                   <th className="p-3">Kelas / Nomor Pertandingan</th>
-                  <th className="p-3">Nama Ayah & HP</th>
-                  <th className="p-3">Nama Ibu & HP</th>
                   <th className="p-3">NIK & KK</th>
-                  <th className="p-3">TB / BB</th>
-                  <th className="p-3">Ukuran Baju/Sepatu</th>
+                  <th className="p-3">HP & Email</th>
                   <th className="p-3 text-center">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/80">
                 {filteredAthletes.map((a, idx) => (
                   <tr key={a.id} className="hover:bg-slate-800/50 transition">
-                    <td className="p-3 text-slate-500 font-mono">{idx + 1}</td>
-                    <td className="p-3 font-bold text-white whitespace-nowrap">{a.name}</td>
-                    <td className="p-3 font-bold text-slate-400">{a.gender === 'Laki-laki' ? 'L' : 'P'}</td>
+                    <td className="py-3 px-2 text-center text-slate-500 font-mono w-10">{idx + 1}</td>
+                    <td className="py-3 pl-1 pr-3 font-bold text-white whitespace-nowrap">{a.name}</td>
+                    <td className="p-3 text-center font-bold text-slate-400">{a.gender === 'Laki-laki' ? 'L' : 'P'}</td>
                     <td className="p-3 whitespace-nowrap">
                       <span
-                        className={`px-2 py-0.5 rounded text-[11px] font-bold ${
+                        className={`px-2.5 py-0.5 rounded text-[11px] font-bold ${
                           a.discipline === 'Sanda'
                             ? 'bg-amber-500/20 text-amber-300'
                             : 'bg-blue-500/20 text-blue-300'
@@ -194,36 +187,23 @@ export const AthletesList: React.FC<AthletesListProps> = ({
                         {a.matchCategory}
                       </span>
                     </td>
-                    {/* Ayah & HP Ayah */}
-                    <td className="p-3 whitespace-nowrap">
-                      <div className="font-bold text-slate-200">{a.fatherName || '-'}</div>
-                      <div className="text-[11px] text-amber-400 font-mono">{a.fatherPhone || '-'}</div>
-                    </td>
-                    {/* Ibu & HP Ibu */}
-                    <td className="p-3 whitespace-nowrap">
-                      <div className="font-bold text-slate-200">{a.motherName || '-'}</div>
-                      <div className="text-[11px] text-emerald-400 font-mono">{a.motherPhone || '-'}</div>
-                    </td>
                     <td className="p-3 font-mono text-[11px] whitespace-nowrap">
                       <div>NIK: {a.nik}</div>
                       <div className="text-slate-500">KK: {a.noKK || '-'}</div>
                     </td>
-                    <td className="p-3 whitespace-nowrap font-bold">
-                      {a.height ? `${a.height} cm` : '-'} /{' '}
-                      <span className="text-amber-400">{a.weight > 0 ? `${a.weight} kg` : '-'}</span>
-                    </td>
-                    <td className="p-3 whitespace-nowrap">
-                      Baju: <strong className="text-white">{a.shirtSize || '-'}</strong>, Sepatu:{' '}
-                      <strong className="text-white">{a.shoeSize || '-'}</strong>
+                    <td className="p-3 whitespace-nowrap text-[11px]">
+                      <div className="text-emerald-400 font-semibold">{a.phone || '-'}</div>
+                      <div className="text-slate-400">{a.email || '-'}</div>
                     </td>
                     <td className="p-3 text-center whitespace-nowrap">
                       <div className="flex items-center justify-center gap-1">
                         <button
                           onClick={() => setViewingAthlete(a)}
-                          className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition"
-                          title="Lihat Detail"
+                          className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition flex items-center gap-1 font-semibold text-[11px]"
+                          title="Lihat Detail Lengkap"
                         >
                           <Eye className="w-3.5 h-3.5" />
+                          <span>Detail</span>
                         </button>
                         <button
                           onClick={() => handleEdit(a)}
@@ -297,21 +277,15 @@ export const AthletesList: React.FC<AthletesListProps> = ({
 
                   <div className="mt-3 p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1.5 text-xs">
                     <div className="flex justify-between text-slate-300">
-                      <span>Ayah:</span>
-                      <span className="font-bold text-amber-400">
-                        {athlete.fatherName || '-'} ({athlete.fatherPhone || '-'})
+                      <span>HP / Email:</span>
+                      <span className="font-bold text-emerald-400">
+                        {athlete.phone || '-'}
                       </span>
                     </div>
                     <div className="flex justify-between text-slate-300">
-                      <span>Ibu:</span>
-                      <span className="font-bold text-emerald-400">
-                        {athlete.motherName || '-'} ({athlete.motherPhone || '-'})
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-slate-300 pt-1 border-t border-slate-900">
-                      <span>Seragam / Sepatu:</span>
-                      <span className="font-bold text-slate-200">
-                        Baju {athlete.shirtSize || '-'} / Sepatu {athlete.shoeSize || '-'}
+                      <span>Orang Tua:</span>
+                      <span className="font-bold text-amber-400">
+                        {athlete.fatherName || athlete.motherName || '-'}
                       </span>
                     </div>
                   </div>
@@ -323,7 +297,7 @@ export const AthletesList: React.FC<AthletesListProps> = ({
                     className="flex items-center gap-1 text-xs text-slate-400 hover:text-white font-semibold transition"
                   >
                     <Eye className="w-3.5 h-3.5" />
-                    <span>Detail</span>
+                    <span>Detail Lengkap</span>
                   </button>
 
                   <div className="flex items-center gap-2">
@@ -364,7 +338,7 @@ export const AthletesList: React.FC<AthletesListProps> = ({
       {/* Athlete Detail Drawer Modal */}
       {viewingAthlete && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg p-6 shadow-2xl relative">
+          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg p-6 shadow-2xl relative max-h-[85vh] overflow-y-auto">
             <button
               onClick={() => setViewingAthlete(null)}
               className="absolute top-4 right-4 text-slate-400 hover:text-white"
@@ -384,12 +358,12 @@ export const AthletesList: React.FC<AthletesListProps> = ({
 
             <div className="space-y-2 text-xs bg-slate-950 p-4 rounded-xl border border-slate-800">
               <div className="flex justify-between border-b border-slate-800/80 pb-1.5">
-                <span className="text-slate-400">Ayah:</span>
-                <span className="text-white font-bold">{viewingAthlete.fatherName || '-'} ({viewingAthlete.fatherPhone || '-'})</span>
+                <span className="text-slate-400">Ayah & HP:</span>
+                <span className="text-amber-400 font-bold">{viewingAthlete.fatherName || '-'} ({viewingAthlete.fatherPhone || '-'})</span>
               </div>
               <div className="flex justify-between border-b border-slate-800/80 pb-1.5">
-                <span className="text-slate-400">Ibu:</span>
-                <span className="text-white font-bold">{viewingAthlete.motherName || '-'} ({viewingAthlete.motherPhone || '-'})</span>
+                <span className="text-slate-400">Ibu & HP:</span>
+                <span className="text-emerald-400 font-bold">{viewingAthlete.motherName || '-'} ({viewingAthlete.motherPhone || '-'})</span>
               </div>
               <div className="flex justify-between border-b border-slate-800/80 pb-1.5">
                 <span className="text-slate-400">NIK:</span>
@@ -404,8 +378,20 @@ export const AthletesList: React.FC<AthletesListProps> = ({
                 <span className="text-white">{viewingAthlete.birthPlace}, {viewingAthlete.birthDate}</span>
               </div>
               <div className="flex justify-between border-b border-slate-800/80 pb-1.5">
+                <span className="text-slate-400">Ukuran Baju & Sepatu:</span>
+                <span className="text-white">Baju: {viewingAthlete.shirtSize || '-'} | Sepatu: {viewingAthlete.shoeSize || '-'}</span>
+              </div>
+              <div className="flex justify-between border-b border-slate-800/80 pb-1.5">
                 <span className="text-slate-400">TB / BB / Gol Darah:</span>
                 <span className="text-emerald-400 font-bold">{viewingAthlete.height || '-'} cm / {viewingAthlete.weight || '-'} kg / Gol {viewingAthlete.bloodType || '-'}</span>
+              </div>
+              <div className="flex justify-between border-b border-slate-800/80 pb-1.5">
+                <span className="text-slate-400">HP Atlet:</span>
+                <span className="text-white font-semibold">{viewingAthlete.phone || '-'}</span>
+              </div>
+              <div className="flex justify-between border-b border-slate-800/80 pb-1.5">
+                <span className="text-slate-400">Email:</span>
+                <span className="text-white">{viewingAthlete.email || '-'}</span>
               </div>
             </div>
 

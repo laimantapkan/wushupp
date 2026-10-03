@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { UserRole, AppNotification } from '../types';
-import { Bell, Wifi, WifiOff, Menu, ChevronDown, CheckCircle } from 'lucide-react';
+import { Bell, Wifi, WifiOff, Menu } from 'lucide-react';
 
 interface HeaderProps {
   currentRole: UserRole;
@@ -14,8 +14,6 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  currentRole,
-  onRoleChange,
   notifications,
   onOpenNotifications,
   onToggleMobileMenu,
@@ -23,15 +21,7 @@ export const Header: React.FC<HeaderProps> = ({
   contingentName,
   faviconUrl = '/wushu_logo.svg',
 }) => {
-  const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
   const unreadCount = notifications.filter((n) => !n.read).length;
-
-  const roleLabels: Record<UserRole, { label: string; bg: string; icon: string }> = {
-    admin: { label: 'ADMIN / MANAGER', bg: 'bg-red-600 text-white', icon: '👑' },
-    pelatih: { label: 'PELATIH (COACH)', bg: 'bg-amber-600 text-white', icon: '📋' },
-    official: { label: 'OFFICIAL / LOGISTIK', bg: 'bg-blue-600 text-white', icon: '💼' },
-    atlet: { label: 'ATLET PORPROV', bg: 'bg-emerald-600 text-white', icon: '🥊' },
-  };
 
   return (
     <header className="sticky top-0 z-30 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 text-white px-4 py-3">
@@ -70,7 +60,7 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Right Actions: Realtime Badge, Notifications, Role Switcher */}
+        {/* Right Actions: Realtime Badge & Notifications */}
         <div className="flex items-center gap-2 sm:gap-3">
           {/* Connection Status Badge */}
           <div
@@ -107,46 +97,6 @@ export const Header: React.FC<HeaderProps> = ({
               </span>
             )}
           </button>
-
-          {/* Role Switcher Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setRoleDropdownOpen(!roleDropdownOpen)}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition shadow ${roleLabels[currentRole].bg}`}
-            >
-              <span>{roleLabels[currentRole].icon}</span>
-              <span className="hidden md:inline">{roleLabels[currentRole].label}</span>
-              <ChevronDown className="w-3.5 h-3.5" />
-            </button>
-
-            {roleDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-56 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl z-50 overflow-hidden py-1">
-                <div className="px-3 py-2 border-b border-slate-700 text-xs text-slate-400 font-semibold uppercase">
-                  Pilih Peran Pengguna
-                </div>
-                {(['admin', 'pelatih', 'official', 'atlet'] as UserRole[]).map((r) => (
-                  <button
-                    key={r}
-                    onClick={() => {
-                      onRoleChange(r);
-                      setRoleDropdownOpen(false);
-                    }}
-                    className={`w-full flex items-center justify-between px-3 py-2 text-xs font-medium text-left transition ${
-                      currentRole === r
-                        ? 'bg-slate-700/80 text-white font-bold'
-                        : 'text-slate-300 hover:bg-slate-700/40 hover:text-white'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <span>{roleLabels[r].icon}</span>
-                      <span>{roleLabels[r].label}</span>
-                    </div>
-                    {currentRole === r && <CheckCircle className="w-4 h-4 text-emerald-400" />}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
       </div>
     </header>

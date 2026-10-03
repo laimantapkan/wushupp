@@ -49,13 +49,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
   unreadNotificationsCount,
 }) => {
   const menuItems: { id: NavTab; label: string; icon: React.ReactNode; badge?: string }[] = [
-    { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
+    { id: 'dashboard', label: 'Dashboard Utama', icon: <LayoutDashboard className="w-5 h-5" /> },
     { id: 'atlet', label: 'Data Atlet', icon: <Users className="w-5 h-5" /> },
+    { id: 'pelatih', label: 'Data Pelatih', icon: <UserCheck className="w-5 h-5" /> },
+    { id: 'manajemen', label: 'Data Official', icon: <Building className="w-5 h-5" /> },
     { id: 'sanda', label: 'Wushu Sanda', icon: <Swords className="w-5 h-5" /> },
     { id: 'taolu', label: 'Wushu Taolu', icon: <Activity className="w-5 h-5" /> },
-    { id: 'pelatih', label: 'Pelatih', icon: <UserCheck className="w-5 h-5" /> },
-    { id: 'manajemen', label: 'Manajemen', icon: <Building className="w-5 h-5" /> },
-    { id: 'checklist', label: 'Checklist', icon: <CheckSquare className="w-5 h-5" /> },
+    { id: 'checklist', label: 'Checklist Kontingen', icon: <CheckSquare className="w-5 h-5" /> },
     { id: 'timbang', label: 'Timbang Sanda', icon: <Scale className="w-5 h-5" /> },
     { id: 'pertandingan', label: 'Jadwal Tanding', icon: <Calendar className="w-5 h-5" /> },
     { id: 'matchday', label: 'Hari Pertandingan', icon: <Zap className="w-5 h-5" />, badge: 'Siap' },

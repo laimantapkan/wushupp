@@ -269,6 +269,30 @@ export default function App() {
             />
           )}
 
+          {activeTab === 'pelatih' && (
+            <CoachesList
+              coaches={state.coaches}
+              officials={state.officials}
+              onSaveCoach={handleSaveCoach}
+              onDeleteCoach={handleDeleteCoach}
+              onSaveOfficial={handleSaveOfficial}
+              onDeleteOfficial={handleDeleteOfficial}
+              defaultTab="coaches"
+            />
+          )}
+
+          {activeTab === 'manajemen' && (
+            <CoachesList
+              coaches={state.coaches}
+              officials={state.officials}
+              onSaveCoach={handleSaveCoach}
+              onDeleteCoach={handleDeleteCoach}
+              onSaveOfficial={handleSaveOfficial}
+              onDeleteOfficial={handleDeleteOfficial}
+              defaultTab="officials"
+            />
+          )}
+
           {activeTab === 'sanda' && (
             <AthletesList
               athletes={state.athletes}
@@ -288,17 +312,6 @@ export default function App() {
               onDeleteAthlete={handleDeleteAthlete}
               filterDiscipline="Taolu"
               onNavigateToChecklist={() => setActiveTab('checklist')}
-            />
-          )}
-
-          {(activeTab === 'pelatih' || activeTab === 'manajemen') && (
-            <CoachesList
-              coaches={state.coaches}
-              officials={state.officials}
-              onSaveCoach={handleSaveCoach}
-              onDeleteCoach={handleDeleteCoach}
-              onSaveOfficial={handleSaveOfficial}
-              onDeleteOfficial={handleDeleteOfficial}
             />
           )}
 
