@@ -9,6 +9,7 @@ export class ApiService {
   private static statusListeners: Array<(connected: boolean) => void> = [];
   private static isConnected = false;
   private static currentState: AppState = initialAppState;
+  private static pollTimer: any = null;
 
   static init(onStateChange: (state: AppState) => void, onStatusChange?: (connected: boolean) => void) {
     this.listeners.push(onStateChange);
@@ -17,10 +18,21 @@ export class ApiService {
       onStatusChange(this.isConnected);
     }
 
+    // Initial Fetch via HTTP to ensure fresh state from server file
+    this.fetchStateHttp();
+
+    // Start WebSocket
     if (!this.ws) {
       this.connectWebSocket();
     } else if (this.currentState) {
       onStateChange(this.currentState);
+    }
+
+    // Start Polling Timer (every 2.5 seconds) as foolproof multi-device fallback
+    if (!this.pollTimer) {
+      this.pollTimer = setInterval(() => {
+        this.fetchStateHttp();
+      }, 2500);
     }
   }
 
@@ -39,14 +51,18 @@ export class ApiService {
       ws.onopen = () => {
         this.isConnected = true;
         this.notifyStatus(true);
+        // Sync fresh state immediately on WS connect
+        this.fetchStateHttp();
       };
 
       ws.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
           if (data.type === 'STATE_INIT' || data.type === 'STATE_UPDATE') {
-            this.currentState = data.state;
-            this.notifyListeners(data.state);
+            if (data.state && data.state.lastUpdated !== this.currentState.lastUpdated) {
+              this.currentState = data.state;
+              this.notifyListeners(data.state);
+            }
           }
         } catch (e) {
           console.error('Error parsing WS message:', e);
@@ -57,7 +73,6 @@ export class ApiService {
         this.isConnected = false;
         this.notifyStatus(false);
         this.ws = null;
-        // Reconnect after 3s
         setTimeout(() => this.connectWebSocket(), 3000);
       };
 
@@ -66,8 +81,7 @@ export class ApiService {
         this.notifyStatus(false);
       };
     } catch (e) {
-      console.warn('WebSocket connection failed, using HTTP fallback', e);
-      this.fetchStateHttp();
+      console.warn('WebSocket connection failed, relying on HTTP polling', e);
     }
   }
 
@@ -83,9 +97,13 @@ export class ApiService {
     try {
       const res = await fetch('/api/state');
       if (res.ok) {
-        const state = await res.json();
-        this.currentState = state;
-        this.notifyListeners(state);
+        const state: AppState = await res.json();
+        if (state && state.lastUpdated !== this.currentState.lastUpdated) {
+          this.currentState = state;
+          this.notifyListeners(state);
+          this.isConnected = true;
+          this.notifyStatus(true);
+        }
         return state;
       }
     } catch (e) {
@@ -95,9 +113,18 @@ export class ApiService {
   }
 
   static updateState(newState: AppState) {
+    newState.lastUpdated = new Date().toISOString();
     this.currentState = newState;
     this.notifyListeners(newState);
 
+    // Send HTTP POST to persist to disk immediately
+    fetch('/api/state', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newState),
+    }).catch((e) => console.error('Failed to post state via REST:', e));
+
+    // Also send WS message for real-time push
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       this.ws.send(
         JSON.stringify({
@@ -106,28 +133,21 @@ export class ApiService {
           clientId: CLIENT_ID,
         })
       );
-    } else {
-      // Fallback REST POST
-      fetch('/api/state', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newState),
-      }).catch((e) => console.error('Failed to post state via REST:', e));
     }
   }
 
   static resetData() {
+    fetch('/api/reset', { method: 'POST' })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.state) {
+          this.currentState = data.state;
+          this.notifyListeners(data.state);
+        }
+      });
+
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify({ type: 'RESET_STATE', clientId: CLIENT_ID }));
-    } else {
-      fetch('/api/reset', { method: 'POST' })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.state) {
-            this.currentState = data.state;
-            this.notifyListeners(data.state);
-          }
-        });
     }
   }
 }

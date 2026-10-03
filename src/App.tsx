@@ -26,7 +26,7 @@ export default function App() {
   const [isNotifModalOpen, setIsNotifModalOpen] = useState(false);
 
   useEffect(() => {
-    // Subscribe to API service with WebSocket real-time state sync
+    // Subscribe to API service with WebSocket real-time state sync + fallback polling
     ApiService.init(
       (updatedState) => setState(updatedState),
       (connected) => setIsConnected(connected)
@@ -47,7 +47,7 @@ export default function App() {
     }
   }, [state.settings.faviconUrl]);
 
-  // Helper to commit state changes
+  // Helper to commit state changes and sync immediately to server disk & websockets
   const updateStore = (updater: (prev: AppState) => AppState) => {
     setState((prev) => {
       const next = updater(prev);
@@ -269,18 +269,6 @@ export default function App() {
             />
           )}
 
-          {activeTab === 'pelatih' && (
-            <CoachesList
-              coaches={state.coaches}
-              officials={state.officials}
-              onSaveCoach={handleSaveCoach}
-              onDeleteCoach={handleDeleteCoach}
-              onSaveOfficial={handleSaveOfficial}
-              onDeleteOfficial={handleDeleteOfficial}
-              defaultTab="coaches"
-            />
-          )}
-
           {activeTab === 'manajemen' && (
             <CoachesList
               coaches={state.coaches}
@@ -289,29 +277,7 @@ export default function App() {
               onDeleteCoach={handleDeleteCoach}
               onSaveOfficial={handleSaveOfficial}
               onDeleteOfficial={handleDeleteOfficial}
-              defaultTab="officials"
-            />
-          )}
-
-          {activeTab === 'sanda' && (
-            <AthletesList
-              athletes={state.athletes}
-              checklists={state.checklists}
-              onSaveAthlete={handleSaveAthlete}
-              onDeleteAthlete={handleDeleteAthlete}
-              filterDiscipline="Sanda"
-              onNavigateToChecklist={() => setActiveTab('checklist')}
-            />
-          )}
-
-          {activeTab === 'taolu' && (
-            <AthletesList
-              athletes={state.athletes}
-              checklists={state.checklists}
-              onSaveAthlete={handleSaveAthlete}
-              onDeleteAthlete={handleDeleteAthlete}
-              filterDiscipline="Taolu"
-              onNavigateToChecklist={() => setActiveTab('checklist')}
+              defaultTab="coaches"
             />
           )}
 

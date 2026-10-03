@@ -2,9 +2,6 @@ import React from 'react';
 import {
   LayoutDashboard,
   Users,
-  Swords,
-  Activity,
-  UserCheck,
   Building,
   CheckSquare,
   Scale,
@@ -20,9 +17,6 @@ import {
 export type NavTab =
   | 'dashboard'
   | 'atlet'
-  | 'sanda'
-  | 'taolu'
-  | 'pelatih'
   | 'manajemen'
   | 'checklist'
   | 'timbang'
@@ -51,10 +45,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const menuItems: { id: NavTab; label: string; icon: React.ReactNode; badge?: string }[] = [
     { id: 'dashboard', label: 'Dashboard Utama', icon: <LayoutDashboard className="w-5 h-5" /> },
     { id: 'atlet', label: 'Data Atlet', icon: <Users className="w-5 h-5" /> },
-    { id: 'pelatih', label: 'Data Pelatih', icon: <UserCheck className="w-5 h-5" /> },
-    { id: 'manajemen', label: 'Data Official', icon: <Building className="w-5 h-5" /> },
-    { id: 'sanda', label: 'Wushu Sanda', icon: <Swords className="w-5 h-5" /> },
-    { id: 'taolu', label: 'Wushu Taolu', icon: <Activity className="w-5 h-5" /> },
+    { id: 'manajemen', label: 'Data Official & Pelatih', icon: <Building className="w-5 h-5" /> },
     { id: 'checklist', label: 'Checklist Kontingen', icon: <CheckSquare className="w-5 h-5" /> },
     { id: 'timbang', label: 'Timbang Sanda', icon: <Scale className="w-5 h-5" /> },
     { id: 'pertandingan', label: 'Jadwal Tanding', icon: <Calendar className="w-5 h-5" /> },
@@ -137,8 +128,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="p-4 border-t border-slate-800 bg-slate-950/40">
           <div className="text-[11px] text-slate-400 font-semibold mb-1">Status Sistem Porprov</div>
           <div className="flex items-center justify-between text-xs font-bold text-slate-200">
-            <span>Versi Real-time</span>
-            <span className="text-emerald-400">v2026.1</span>
+            <span>Versi Real-time Sync</span>
+            <span className="text-emerald-400">Online</span>
           </div>
         </div>
       </aside>
