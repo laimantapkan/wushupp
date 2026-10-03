@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AppState, UserRole, Athlete, Coach, Official, ChecklistItem, WeighInLog, MatchSchedule, DocumentItem, AppSettings } from './types';
 import { initialAppState } from './data/initialData';
-import { ApiService } from './services/api';
+import { FirebaseService } from './services/firebase';
 import { Header } from './components/Header';
 import { Sidebar, NavTab } from './components/Sidebar';
 import { Dashboard } from './components/Dashboard';
@@ -19,21 +19,21 @@ import { NotificationModal } from './components/NotificationModal';
 
 export default function App() {
   const [state, setState] = useState<AppState>(initialAppState);
-  const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(true);
   const [currentRole, setCurrentRole] = useState<UserRole>('admin');
   const [activeTab, setActiveTab] = useState<NavTab>('dashboard');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isNotifModalOpen, setIsNotifModalOpen] = useState(false);
 
   useEffect(() => {
-    // Subscribe to API service with WebSocket real-time state sync + fallback polling
-    ApiService.init(
+    // Subscribe to Firebase Firestore Cloud Database real-time state sync
+    FirebaseService.init(
       (updatedState) => setState(updatedState),
       (connected) => setIsConnected(connected)
     );
 
     return () => {
-      ApiService.removeListener((updatedState) => setState(updatedState));
+      FirebaseService.removeListener((updatedState) => setState(updatedState));
     };
   }, []);
 
@@ -47,11 +47,11 @@ export default function App() {
     }
   }, [state.settings.faviconUrl]);
 
-  // Helper to commit state changes and sync immediately to server disk & websockets
+  // Helper to commit state changes and sync immediately to Firebase Cloud Firestore
   const updateStore = (updater: (prev: AppState) => AppState) => {
     setState((prev) => {
       const next = updater(prev);
-      ApiService.updateState(next);
+      FirebaseService.updateState(next);
       return next;
     });
   };
@@ -213,7 +213,7 @@ export default function App() {
   };
 
   const handleResetData = () => {
-    ApiService.resetData();
+    FirebaseService.resetData();
   };
 
   // Notifications
