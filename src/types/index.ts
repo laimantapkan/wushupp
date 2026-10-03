@@ -8,6 +8,8 @@ export type WeighInStatus = 'sesuai' | 'mendekati' | 'diatas';
 
 export type MatchStatus = 'Belum bertanding' | 'Persiapan' | 'Sedang bertanding' | 'Selesai';
 
+export type DailyNoteCategory = 'Pertandingan' | 'Kondisi Atlet' | 'Evaluasi' | 'Cedera' | 'Jadwal' | 'Lainnya';
+
 export interface SandaAthleteDetails {
   weightClass: string; // e.g. "56 kg", "60 kg"
   initialWeight: number; // in kg
@@ -142,6 +144,20 @@ export interface DocumentItem {
   updatedAt: string;
 }
 
+export interface DailyNote {
+  id: string;
+  date: string; // YYYY-MM-DD
+  time: string; // HH:mm
+  title: string;
+  category: DailyNoteCategory;
+  athleteId?: string;
+  athleteName?: string;
+  content: string;
+  followUp?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AppNotification {
   id: string;
   type: 'danger' | 'warning' | 'success' | 'info';
@@ -166,6 +182,7 @@ export interface AppState {
   weighInLogs: WeighInLog[];
   matches: MatchSchedule[];
   documents: DocumentItem[];
+  dailyNotes: DailyNote[];
   notifications: AppNotification[];
   settings: AppSettings;
   lastUpdated: string;

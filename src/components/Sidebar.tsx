@@ -6,8 +6,7 @@ import {
   CheckSquare,
   Scale,
   Calendar,
-  Zap,
-  Bus,
+  BookOpen,
   FileText,
   BarChart3,
   Settings,
@@ -21,8 +20,7 @@ export type NavTab =
   | 'checklist'
   | 'timbang'
   | 'pertandingan'
-  | 'matchday'
-  | 'keberangkatan'
+  | 'catatan'
   | 'dokumen'
   | 'laporan'
   | 'pengaturan';
@@ -49,8 +47,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'checklist', label: 'Checklist Kontingen', icon: <CheckSquare className="w-5 h-5" /> },
     { id: 'timbang', label: 'Timbang Sanda', icon: <Scale className="w-5 h-5" /> },
     { id: 'pertandingan', label: 'Jadwal Tanding', icon: <Calendar className="w-5 h-5" /> },
-    { id: 'matchday', label: 'Hari Pertandingan', icon: <Zap className="w-5 h-5" />, badge: 'Siap' },
-    { id: 'keberangkatan', label: 'Keberangkatan', icon: <Bus className="w-5 h-5" /> },
+    { id: 'catatan', label: 'Catatan Harian', icon: <BookOpen className="w-5 h-5" />, badge: 'Baru' },
     { id: 'dokumen', label: 'Dokumen', icon: <FileText className="w-5 h-5" /> },
     { id: 'laporan', label: 'Laporan', icon: <BarChart3 className="w-5 h-5" /> },
     { id: 'pengaturan', label: 'Pengaturan', icon: <Settings className="w-5 h-5" /> },

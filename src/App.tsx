@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AppState, UserRole, Athlete, Coach, Official, ChecklistItem, WeighInLog, MatchSchedule, DocumentItem, AppSettings } from './types';
-import { initialAppState } from './data/initialData';
+import { AppState, UserRole, Athlete, Coach, Official, ChecklistItem, WeighInLog, MatchSchedule, DocumentItem, DailyNote, AppSettings } from './types';
 import { FirebaseService } from './services/firebase';
 import { Header } from './components/Header';
 import { Sidebar, NavTab } from './components/Sidebar';
@@ -10,15 +9,15 @@ import { CoachesList } from './components/CoachesList';
 import { ChecklistsView } from './components/ChecklistsView';
 import { SandaWeighIn } from './components/SandaWeighIn';
 import { MatchesView } from './components/MatchesView';
-import { MatchDayChecklist } from './components/MatchDayChecklist';
-import { DepartureChecklist } from './components/DepartureChecklist';
+import { DailyNotesView } from './components/DailyNotesView';
 import { DocumentsView } from './components/DocumentsView';
 import { ReportsView } from './components/ReportsView';
 import { SettingsView } from './components/SettingsView';
 import { NotificationModal } from './components/NotificationModal';
 
 export default function App() {
-  const [state, setState] = useState<AppState>(initialAppState);
+  // Initialize state from FirebaseService (reads LocalStorage cache first so reloads never lose edited data)
+  const [state, setState] = useState<AppState>(() => FirebaseService.getInitialState());
   const [isConnected, setIsConnected] = useState(true);
   const [currentRole, setCurrentRole] = useState<UserRole>('admin');
   const [activeTab, setActiveTab] = useState<NavTab>('dashboard');
@@ -47,7 +46,7 @@ export default function App() {
     }
   }, [state.settings.faviconUrl]);
 
-  // Helper to commit state changes and sync immediately to Firebase Cloud Firestore
+  // Helper to commit state changes and sync immediately to LocalStorage, Firestore, and Server Disk
   const updateStore = (updater: (prev: AppState) => AppState) => {
     setState((prev) => {
       const next = updater(prev);
@@ -185,6 +184,25 @@ export default function App() {
     }));
   };
 
+  // Daily Notes Actions
+  const handleSaveDailyNote = (note: DailyNote) => {
+    updateStore((prev) => {
+      const currentNotes = prev.dailyNotes || [];
+      const exists = currentNotes.some((n) => n.id === note.id);
+      const newNotes = exists
+        ? currentNotes.map((n) => (n.id === note.id ? note : n))
+        : [note, ...currentNotes];
+      return { ...prev, dailyNotes: newNotes };
+    });
+  };
+
+  const handleDeleteDailyNote = (id: string) => {
+    updateStore((prev) => ({
+      ...prev,
+      dailyNotes: (prev.dailyNotes || []).filter((n) => n.id !== id),
+    }));
+  };
+
   // Documents Actions
   const handleAddDocument = (doc: DocumentItem) => {
     updateStore((prev) => ({
@@ -307,17 +325,12 @@ export default function App() {
             />
           )}
 
-          {activeTab === 'matchday' && (
-            <MatchDayChecklist
-              checklists={state.checklists}
-              onToggleItem={handleToggleChecklistItem}
-            />
-          )}
-
-          {activeTab === 'keberangkatan' && (
-            <DepartureChecklist
-              checklists={state.checklists}
-              onToggleItem={handleToggleChecklistItem}
+          {activeTab === 'catatan' && (
+            <DailyNotesView
+              notes={state.dailyNotes || []}
+              athletes={state.athletes}
+              onSaveNote={handleSaveDailyNote}
+              onDeleteNote={handleDeleteDailyNote}
             />
           )}
 

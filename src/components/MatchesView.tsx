@@ -302,12 +302,18 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1">Tanggal</label>
-                  <input
-                    type="date"
+                  <select
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white"
-                  />
+                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-semibold"
+                  >
+                    <option value="2026-10-05">05 Oktober 2026</option>
+                    <option value="2026-10-06">06 Oktober 2026</option>
+                    <option value="2026-10-07">07 Oktober 2026</option>
+                    <option value="2026-10-08">08 Oktober 2026</option>
+                    <option value="2026-10-09">09 Oktober 2026</option>
+                    <option value="2026-10-10">10 Oktober 2026</option>
+                  </select>
                 </div>
 
                 <div>
