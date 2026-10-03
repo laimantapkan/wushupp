@@ -65,21 +65,21 @@ export interface Athlete {
 export interface Coach {
   id: string;
   name: string;
-  roleTitle: 'Pelatih Kepala' | 'Pelatih Sanda' | 'Pelatih Taolu' | 'Asisten Pelatih' | 'Fisioterapis / Fisik';
+  roleTitle: string; // e.g. 'Pelatih Kepala', 'Pelatih Sanda', 'Pelatih Taolu', 'Asisten Pelatih', 'Fisioterapis / Fisik', 'Official'
   specialization: 'Sanda' | 'Taolu' | 'Umum';
   phone: string;
   healthStatus: string;
-  notes: string;
+  notes?: string;
   photoUrl?: string;
 }
 
 export interface Official {
   id: string;
   name: string;
-  roleTitle: 'Manajer Kontingen' | 'Sekretaris' | 'Bendahara' | 'Tim Logistik' | 'Dokter Tim' | 'Dokumentasi & Media';
-  section: string;
+  roleTitle: string; // e.g. 'Official', 'Manajer Kontingen', 'Sekretaris', 'Bendahara', 'Tim Logistik', 'Dokter Tim', 'Dokumentasi & Media'
+  section?: string;
   phone: string;
-  notes: string;
+  notes?: string;
 }
 
 export interface ChecklistItem {

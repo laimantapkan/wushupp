@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Coach, Official } from '../types';
-import { UserCheck, Building, Plus, Phone, Edit2, Trash2, Shield, HeartPulse, X } from 'lucide-react';
+import { UserCheck, Building, Plus, Phone, Edit2, Trash2, X } from 'lucide-react';
 
 interface CoachesListProps {
   coaches: Coach[];
@@ -35,15 +35,13 @@ export const CoachesList: React.FC<CoachesListProps> = ({
 
   // Coach Form State
   const [coachName, setCoachName] = useState('');
-  const [coachRole, setCoachRole] = useState<'Pelatih Kepala' | 'Pelatih Sanda' | 'Pelatih Taolu' | 'Asisten Pelatih' | 'Fisioterapis / Fisik'>('Pelatih Kepala');
+  const [coachRole, setCoachRole] = useState<string>('Pelatih Kepala');
   const [coachSpec, setCoachSpec] = useState<'Sanda' | 'Taolu' | 'Umum'>('Sanda');
   const [coachPhone, setCoachPhone] = useState('');
-  const [coachNotes, setCoachNotes] = useState('');
 
   // Official Form State
   const [officialName, setOfficialName] = useState('');
-  const [officialRole, setOfficialRole] = useState<'Manajer Kontingen' | 'Sekretaris' | 'Bendahara' | 'Tim Logistik' | 'Dokter Tim' | 'Dokumentasi & Media'>('Manajer Kontingen');
-  const [officialSection, setOfficialSection] = useState('');
+  const [officialRole, setOfficialRole] = useState<string>('Official');
   const [officialPhone, setOfficialPhone] = useState('');
   const [officialNotes, setOfficialNotes] = useState('');
 
@@ -51,17 +49,15 @@ export const CoachesList: React.FC<CoachesListProps> = ({
     if (coach) {
       setEditingCoach(coach);
       setCoachName(coach.name);
-      setCoachRole(coach.roleTitle);
+      setCoachRole(coach.roleTitle || 'Pelatih Kepala');
       setCoachSpec(coach.specialization);
       setCoachPhone(coach.phone);
-      setCoachNotes(coach.notes);
     } else {
       setEditingCoach(null);
       setCoachName('');
       setCoachRole('Pelatih Kepala');
       setCoachSpec('Sanda');
       setCoachPhone('');
-      setCoachNotes('');
     }
     setIsCoachModalOpen(true);
   };
@@ -70,15 +66,13 @@ export const CoachesList: React.FC<CoachesListProps> = ({
     if (official) {
       setEditingOfficial(official);
       setOfficialName(official.name);
-      setOfficialRole(official.roleTitle);
-      setOfficialSection(official.section);
+      setOfficialRole(official.roleTitle || 'Official');
       setOfficialPhone(official.phone);
-      setOfficialNotes(official.notes);
+      setOfficialNotes(official.notes || '');
     } else {
       setEditingOfficial(null);
       setOfficialName('');
-      setOfficialRole('Manajer Kontingen');
-      setOfficialSection('Manajemen & Logistik');
+      setOfficialRole('Official');
       setOfficialPhone('');
       setOfficialNotes('');
     }
@@ -96,7 +90,6 @@ export const CoachesList: React.FC<CoachesListProps> = ({
       specialization: coachSpec,
       phone: coachPhone,
       healthStatus: 'Sehat',
-      notes: coachNotes,
     });
     setIsCoachModalOpen(false);
   };
@@ -109,7 +102,6 @@ export const CoachesList: React.FC<CoachesListProps> = ({
       id: editingOfficial?.id || `off-${Date.now()}`,
       name: officialName,
       roleTitle: officialRole,
-      section: officialSection,
       phone: officialPhone,
       notes: officialNotes,
     });
@@ -206,7 +198,6 @@ export const CoachesList: React.FC<CoachesListProps> = ({
                     <Phone className="w-3.5 h-3.5 text-slate-400" />
                     <span>{c.phone || 'Tidak ada HP'}</span>
                   </div>
-                  <p className="text-slate-400 pt-1 text-[11px] italic">{c.notes}</p>
                 </div>
               </div>
 
@@ -244,7 +235,6 @@ export const CoachesList: React.FC<CoachesListProps> = ({
                   <span className="px-2.5 py-0.5 text-[10px] font-extrabold bg-blue-500/20 text-blue-300 border border-blue-500/30 rounded-full">
                     OFFICIAL
                   </span>
-                  <span className="text-[11px] font-semibold text-slate-400">{o.section}</span>
                 </div>
 
                 <h3 className="text-base font-extrabold text-white mt-1">{o.name}</h3>
@@ -255,7 +245,7 @@ export const CoachesList: React.FC<CoachesListProps> = ({
                     <Phone className="w-3.5 h-3.5 text-slate-400" />
                     <span>{o.phone || 'Tidak ada HP'}</span>
                   </div>
-                  <p className="text-slate-400 pt-1 text-[11px] italic">{o.notes}</p>
+                  {o.notes && <p className="text-slate-400 pt-1 text-[11px] italic">{o.notes}</p>}
                 </div>
               </div>
 
@@ -307,17 +297,18 @@ export const CoachesList: React.FC<CoachesListProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Jabatan / Role</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">Jabatan / Role *</label>
                 <select
                   value={coachRole}
-                  onChange={(e) => setCoachRole(e.target.value as any)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white"
+                  onChange={(e) => setCoachRole(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-semibold"
                 >
                   <option value="Pelatih Kepala">Pelatih Kepala</option>
                   <option value="Pelatih Sanda">Pelatih Sanda</option>
                   <option value="Pelatih Taolu">Pelatih Taolu</option>
                   <option value="Asisten Pelatih">Asisten Pelatih</option>
                   <option value="Fisioterapis / Fisik">Fisioterapis / Fisik</option>
+                  <option value="Official">Official</option>
                 </select>
               </div>
 
@@ -326,7 +317,7 @@ export const CoachesList: React.FC<CoachesListProps> = ({
                 <select
                   value={coachSpec}
                   onChange={(e) => setCoachSpec(e.target.value as any)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-semibold"
                 >
                   <option value="Sanda">Sanda</option>
                   <option value="Taolu">Taolu</option>
@@ -341,16 +332,6 @@ export const CoachesList: React.FC<CoachesListProps> = ({
                   value={coachPhone}
                   onChange={(e) => setCoachPhone(e.target.value)}
                   className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Catatan</label>
-                <textarea
-                  rows={2}
-                  value={coachNotes}
-                  onChange={(e) => setCoachNotes(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white resize-none"
                 />
               </div>
 
@@ -401,12 +382,13 @@ export const CoachesList: React.FC<CoachesListProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Jabatan / Role</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">Jabatan / Role *</label>
                 <select
                   value={officialRole}
-                  onChange={(e) => setOfficialRole(e.target.value as any)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white"
+                  onChange={(e) => setOfficialRole(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-semibold"
                 >
+                  <option value="Official">Official</option>
                   <option value="Manajer Kontingen">Manajer Kontingen</option>
                   <option value="Sekretaris">Sekretaris</option>
                   <option value="Bendahara">Bendahara</option>
@@ -414,17 +396,6 @@ export const CoachesList: React.FC<CoachesListProps> = ({
                   <option value="Dokter Tim">Dokter Tim</option>
                   <option value="Dokumentasi & Media">Dokumentasi & Media</option>
                 </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Seksi / Bidang</label>
-                <input
-                  type="text"
-                  value={officialSection}
-                  onChange={(e) => setOfficialSection(e.target.value)}
-                  placeholder="mis. Administrasi & Logistik"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white"
-                />
               </div>
 
               <div>
